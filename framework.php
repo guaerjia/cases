@@ -10,7 +10,7 @@ class FrontController {
     static $_instance;
 
     public static function getInstance() {
-	if ( !(self::$_instance instance of self) ) {
+	if ( !(self::$_instance instanceof self) ) {
 	    self::$_instance = new self();
 	}
 	return self::$_instance;
@@ -25,7 +25,7 @@ class FrontController {
 
 	$splits = explode('/', trim($path,'/'));
 
-	$this->_controller = !empty($splits[0]) ? $splits[0] : 'indexController';
+	$this->_controller = !empty($splits[0]) ? ucfirst($splits[0]).'Controller' : 'IndexController';
 	$this->_action = !empty($splits[1]) ? $splits[1] : 'index';
 
     }
@@ -33,12 +33,12 @@ class FrontController {
 
     public function route() {
 
-	if (!preg_match('/^[a-zA-Z_-]$/',$this->_controller)) {
-	    throw new Exception("controller:" . $this->_controller . " is not illegal.";
+	if (!preg_match('/^[a-zA-Z_-]+$/',$this->_controller)) {
+	    throw new Exception("controller:" . $this->_controller . " is illegal.");
 	}
 
-	if (!preg_match('/^[a-zA-Z_-]$/',$this->_action)) {
-	    throw new Exception("action:".$this->_action . " is not illegal.";
+	if (!preg_match('/^[a-zA-Z_-]+$/',$this->_action)) {
+	    throw new Exception("action:".$this->_action . " is illegal.");
 	}
 	
 	if (class_exists($this->_controller)) {

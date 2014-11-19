@@ -2,7 +2,9 @@
 // exception handler
 function exceptionHandler($exception) {
     $exceptionMessage = "";
+    
     $exceptionMessage .= "[" . date("m-d H:i:s") . "] " . $exception->getMessage()."\n";
+    $exceptionMessage .= "Exception on line ". $exception->getLine() . " in " . $exception->getFile() . "\n";
     if (isset($_REQUEST)) {
 	$exceptionMessage .= "REQUEST: " . print_r($_REQUEST,true) . "\n";
 	$exceptionMessage .= "REQUEST_URI: " . print_r($_SERVER['REQUEST_URI'],true) . "\n\n";
@@ -17,7 +19,7 @@ function exceptionHandler($exception) {
 function errorHandler($errno, $errstr, $errfile, $errline) {
 
     $errorMessage = "";
-    $errorMessage .= "[" . date("m-d H:i:s") . "] [" . $errno . " " . $error . "\n";
+    $errorMessage .= "[" . date("m-d H:i:s") . "] [" . $errno . " " . $errstr . "\n";
     $errorMessage .= "Error on line ". $errline . " in " . $errfile . "\n\n";
     if (isset($_REQUEST)) {
 	$errorMessage .= "REQUEST: " . print_r($_REQUEST,true) . "\n";
@@ -41,11 +43,38 @@ function myShutdown() {
 // autoload function
 function myAutoLoader($class) {
     
-    if (strstr($class, 'controller')) {
-	require APP_PATH . '/app/controllers/' . $class . 'Controller.php';
+    $class = ucfirst($class);
+
+    if (strstr($class, 'Controller')) {
+	require APP_PATH . '/app/controllers/' . $class . '.php';
     } else if ( strstr($class, 'Model') ) {
-	require APP_PATH . '/app/models/' . $class . 'Model.php';
+	require APP_PATH . '/app/models/' . $class . '.php';
     } else {
 	require APP_PATH . '/services/' . $class . '.php';
     }
+}
+
+
+// debug
+function myLog($message) {
+
+    $debug = debug_backtrace();
+    $call_info = array_shift( $debug );
+    $code_line = $call_info['line'];
+   	
+    $function = isset($debug[0]['function']) ? $debug[0]['function'] : '';
+   	
+    $exploded = explode('/', $call_info['file']);
+    $file = array_pop( $exploded );
+	
+    if (is_object($message)) {
+	$message = (array) $message;
+    }
+ 	
+    if (is_array($message)) {
+    	$message = print_r($message, true);
+    }
+    
+    error_log("[".date("m-d H:i:s") . ' ' .$file.' '.$code_line.' '.$function."] ".$message."\n", 3, DEBUG_LOG);
+
 }
