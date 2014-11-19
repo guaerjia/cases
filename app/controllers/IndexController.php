@@ -3,8 +3,13 @@
 class IndexController extends BaseController {
 
     public function index() {
-	echo "hello, world!"; 
+
+	$view = View::make('index/index')->with('foo','bar');
+
+	View::process($view);
+
     }
+
 
     public function test() {
     

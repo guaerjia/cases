@@ -5,6 +5,7 @@ $config = require APP_PATH . '/config/config.php';
 
 define('ERROR_LOG', $config['error_log_path']);
 define('DEBUG_LOG', $config['debug_log_path']);
+define('TITLE', $config['title']);
 
 require APP_PATH . '/function.php';
 
